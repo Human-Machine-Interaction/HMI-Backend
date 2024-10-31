@@ -1,8 +1,9 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IProfile } from "../interfaces/users.interface"
-import { IsString, MinLength, IsEnum, ValidateNested, IsArray } from 'class-validator';
-import mongoose, { HydratedDocument } from 'mongoose';
+import { IsEnum, ValidateNested } from 'class-validator';
+import { HydratedDocument } from 'mongoose';
+import * as bcrypt from 'bcryptjs';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -43,3 +44,11 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre<UserDocument>('save', async function(next) {
+    if (this.isModified('password') || this.isNew) {
+        const salt = await bcrypt.genSalt(12);
+        this.password = await bcrypt.hash(this.password, salt);
+    }
+    next();
+});

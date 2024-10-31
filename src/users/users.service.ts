@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Connection, Model } from 'mongoose';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 
 
 @Injectable()
@@ -24,7 +24,6 @@ export class UsersService {
 
     async findById(id: string): Promise<User> {
         const user = await this.userModel.findById(id).exec();
-        console.log(user);
         if (!user) {
             throw new NotFoundException("user with this id not found");
         }
@@ -32,14 +31,31 @@ export class UsersService {
     }
 
     async findOne(username: string): Promise<User> {
-        const user = await this.userModel.findOne({ username }).exec();
+        const user = await this.userModel.findOne({ username }).select('+password').exec();
         if (!user) {
             throw new NotFoundException("user with this username not found");
         }
         return user;
     }
 
-    async delete(id: string): Promise<User> {
-        return this.userModel.findByIdAndDelete(id).exec();
+    async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+        const newUser = await this.userModel.findByIdAndUpdate(id, updateUserDto,
+            {
+                new: true,
+                runValidators: true,
+            }
+        ).exec();
+
+        if (!newUser) {
+            throw new NotFoundException("user with this id not found");
+        }
+        return newUser;
+    }
+
+    async delete(id: string) {
+        const user = await this.userModel.findByIdAndDelete(id).exec();
+        if (!user) {
+            throw new NotFoundException("user with this id not found");
+        }
     }
 }

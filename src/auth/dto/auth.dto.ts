@@ -6,3 +6,11 @@ export class LoginDto {
     @IsNotEmpty()
     password: string;
 }
+
+export class SignUpDto {
+    @IsNotEmpty()
+    username: string;
+
+    @IsNotEmpty()
+    password: string;
+}
