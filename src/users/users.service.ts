@@ -1,48 +1,45 @@
 
-import { Injectable } from '@nestjs/common';
-import { Iuser } from './interfaces/users.interface';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { User } from './schemas/user.schema';
+import { Connection, Model } from 'mongoose';
+import { CreateUserDto } from './dto/user.dto';
 
 
 @Injectable()
 export class UsersService {
-    private readonly users: Iuser[] = [
-        {
-            username: "john_doe",
-            password: "$2a$13$zBo509bAuzSQysIxqchoB.PvsuLwMfZeELkPcZ7NifIQQO6rU6DVG",
-            role: "doctor",
-            userProfile: {
-                firstName: "John",
-                lastName: "Doe",
-                phoneNumber: "123-456-7890",
-                weight: 75,
-                height: 180,
-                dateOfBirth: new Date("1980-01-01"),
-                gender: "male",
-                address: "123 Main St, Anytown, USA",
-                avatar: "john_avatar.png"
-            },
-            mskProblem: ["back pain", "knee pain"]
-        },
-        {
-            username: "jane_smith",
-            password: "$2a$13$zBo509bAuzSQysIxqchoB..BareVtNvdoWqoqar/xD3Vc1HgwEMFO",
-            role: "patient",
-            userProfile: {
-                firstName: "Jane",
-                lastName: "Smith",
-                phoneNumber: "987-654-3210",
-                weight: 65,
-                height: 165,
-                dateOfBirth: new Date("1990-05-15"),
-                gender: "female",
-                address: "456 Elm St, Othertown, USA",
-                avatar: "jane_avatar.png"
-            },
-            mskProblem: ["shoulder pain"]
-        },
-    ];
+    constructor(
+        @InjectModel(User.name) private userModel: Model<User>,
+        @InjectConnection() private connection: Connection
+    ) { }
 
-    async findOne(username: string): Promise<Iuser | undefined> {
-        return this.users.find(user => user.username === username);
+    async create(createUserDto: CreateUserDto): Promise<User> {
+        const createdUser = new this.userModel(createUserDto);
+        return createdUser.save();
+    }
+
+    async findAll(): Promise<User[]> {
+        return this.userModel.find().exec();
+    }
+
+    async findById(id: string): Promise<User> {
+        const user = await this.userModel.findById(id).exec();
+        console.log(user);
+        if (!user) {
+            throw new NotFoundException("user with this id not found");
+        }
+        return user
+    }
+
+    async findOne(username: string): Promise<User> {
+        const user = await this.userModel.findOne({ username }).exec();
+        if (!user) {
+            throw new NotFoundException("user with this username not found");
+        }
+        return user;
+    }
+
+    async delete(id: string): Promise<User> {
+        return this.userModel.findByIdAndDelete(id).exec();
     }
 }

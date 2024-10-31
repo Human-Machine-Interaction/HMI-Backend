@@ -6,7 +6,7 @@ export interface Iuser {
     mskProblem:string[],
 }
 
-interface IProfile {
+export interface IProfile {
     firstName?:string,
     lastName?:string,
     phoneNumber?:string,
