@@ -7,7 +7,7 @@ import { LoginDto, SignUpDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) { }
+  constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
   async logIn(loginDto:LoginDto): Promise<any> {
     const user = await this.usersService.findOne(loginDto.username);

@@ -2,8 +2,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IProfile } from "../interfaces/users.interface"
 import { IsEnum, ValidateNested } from 'class-validator';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
+import { MskProblem } from 'src/msk-problem/schemas/msk-problem.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -39,8 +40,8 @@ export class User {
     @ValidateNested()
     userProfile: IProfile
 
-    // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MskProblem' }] })
-    // mskProblem: string[]
+    @Prop({ type: [{ type: Types.ObjectId, ref: MskProblem.name }] })
+    mskProblems: Types.ObjectId[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -52,3 +53,8 @@ UserSchema.pre<UserDocument>('save', async function(next) {
     }
     next();
 });
+
+UserSchema.pre<UserDocument>(/^find/, async function(next) {
+    this.populate('mskProblems');
+    next();
+})

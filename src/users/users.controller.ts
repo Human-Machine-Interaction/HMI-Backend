@@ -17,19 +17,19 @@ export class UsersController {
     @Get(':id')
     @Public()
     @HttpCode(HttpStatus.OK)
-    async getUserById(@Param('id', ParseObjectIdPipe) id: string) {
-        return await this.usersService.findById(id);
+    getUserById(@Param('id', ParseObjectIdPipe) id: string) {
+        return this.usersService.findById(id);
     }
 
     @Patch(':id')
     @HttpCode(HttpStatus.OK)
-    async updateUserById(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-        return await this.usersService.update(id, updateUserDto);
+    updateUserById(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.update(id, updateUserDto);
     }
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteUserById(@Param('id', ParseObjectIdPipe) id: string) {
-        return await this.usersService.delete(id);
+    deleteUserById(@Param('id', ParseObjectIdPipe) id: string) {
+        return this.usersService.delete(id);
     }
 }

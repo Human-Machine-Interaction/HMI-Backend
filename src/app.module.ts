@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MskProblemModule } from './msk-problem/msk-problem.module';
 import databaseConfig from './config/database.config';
 
 @Module({
@@ -27,7 +28,8 @@ import databaseConfig from './config/database.config';
       inject: [ConfigService],
     }),
     AuthModule,
-    UsersModule 
+    UsersModule,
+    MskProblemModule 
   ],
   controllers: [AppController],
   providers: [AppService],
