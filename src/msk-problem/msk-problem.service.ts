@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel, InjectConnection } from '@nestjs/mongoose';
-import { Model, Connection } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { MskProblem } from './schemas/msk-problem.schema';
 import { CreateMskProblemDto, UpdateMskProblemDto } from './dto/msk-problem.dto';
 
