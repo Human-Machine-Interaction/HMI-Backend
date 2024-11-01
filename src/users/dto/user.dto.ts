@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, ValidateNested } from "class-validator";
+import { IsArray, IsMongoId, IsNotEmpty, IsOptional, ValidateNested } from "class-validator";
 import { IProfile } from "../interfaces/users.interface";
 import { Type } from "class-transformer";
 
@@ -14,9 +14,11 @@ export class UpdateUserDto {
     @IsOptional()
     @Type(() => UserProfileDto)
     userProfile: IProfile;
-
+    
+    @IsArray()
     @IsOptional()
-    mskProblem: string[];
+    @IsMongoId({ each: true })
+    mskProblems: string[];
 }
 
 export class UserProfileDto implements IProfile {

@@ -2,7 +2,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IProfile } from "../interfaces/users.interface"
 import { IsEnum, ValidateNested } from 'class-validator';
-import { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { MskProblem } from 'src/msk-problem/schemas/msk-problem.schema';
 
@@ -34,19 +34,19 @@ export class User {
     role: "doctor" | "patient"
 
     @Prop({
-        type:Object,
+        type: Object,
         default: {}
     })
     @ValidateNested()
     userProfile: IProfile
 
-    @Prop({ type: [{ type: Types.ObjectId, ref: MskProblem.name }] })
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: MskProblem.name }], default: [] })
     mskProblems: Types.ObjectId[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.pre<UserDocument>('save', async function(next) {
+UserSchema.pre<UserDocument>('save', async function (next) {
     if (this.isModified('password') || this.isNew) {
         const salt = await bcrypt.genSalt(12);
         this.password = await bcrypt.hash(this.password, salt);
@@ -54,7 +54,11 @@ UserSchema.pre<UserDocument>('save', async function(next) {
     next();
 });
 
-UserSchema.pre<UserDocument>(/^find/, async function(next) {
-    this.populate('mskProblems');
+UserSchema.pre<UserDocument>(/^find/, function (next) {
+    this.populate({
+        path: "mskProblems",
+        select: "-__v -createdAt -updatedAt -_id",
+    });
     next();
 })
+
