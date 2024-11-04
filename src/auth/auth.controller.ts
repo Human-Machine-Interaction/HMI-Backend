@@ -2,17 +2,16 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
   HttpStatus,
   Post,
-  Request,
-  UseGuards
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/common/decorators/publicAPI.decorator';
 import { LoginDto } from './dto/auth.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
@@ -20,12 +19,16 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
+  @ApiResponse({ status: 200, description: 'access_token: some token' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   logIn(@Body() loginDto: LoginDto) {
     return this.authService.logIn(loginDto);
   }
 
-  @Post('signup')
   @Public()
+  @Post('signup')
+  @ApiResponse({ status: 200, description: 'access_token: some token' })
+  @ApiResponse({ status: 409, description: 'message: Username already exists' })
   signUp(@Body() signUpDto: LoginDto) {
     return this.authService.signUp(signUpDto);
   }
