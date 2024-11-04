@@ -21,7 +21,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Auth')
     .addTag('Users')
-    .addTag('MskProblems')
+    .addTag('MskProblem')
     .addBearerAuth()
     .build();
 
