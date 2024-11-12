@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id.pipe';
-import { UpdateUserDto, UserQueryDto } from './dto/user.dto';
+import { UpdateUserDto } from './dto/user.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { QueryAllDto } from 'src/common/dto/queryAllDto';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -14,7 +15,7 @@ export class UsersController {
     @ApiResponse({ status: 200, description: 'get all user document' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @HttpCode(HttpStatus.OK)
-    async getAllUsers(@Query() userQueryDto: UserQueryDto) {
+    async getAllUsers(@Query() userQueryDto: QueryAllDto) {
         return await this.usersService.findAll(userQueryDto);
     }
 
@@ -26,6 +27,7 @@ export class UsersController {
         return this.usersService.findById(id);
     }
 
+    // TODO: Authorization for this route should be added in the future
     @Patch(':id')
     @ApiResponse({ status: 200, description: 'update a user' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -34,6 +36,7 @@ export class UsersController {
         return this.usersService.update(id, updateUserDto);
     }
 
+    // TODO: Authorization for this route should be added in the future
     @Delete(':id')
     @ApiResponse({ status: 200, description: 'delete a user' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })

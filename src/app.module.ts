@@ -6,6 +6,9 @@ import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MskProblemModule } from './msk-problem/msk-problem.module';
+import { ExerciseModule } from './exercise/exercise.module';
+import { LessonModule } from './lesson/lesson.module';
+import { SessionModule } from './session/session.module';
 import databaseConfig from './config/database.config';
 
 @Module({
@@ -29,7 +32,10 @@ import databaseConfig from './config/database.config';
     }),
     AuthModule,
     UsersModule,
-    MskProblemModule 
+    MskProblemModule,
+    ExerciseModule,
+    LessonModule,
+    SessionModule 
   ],
   controllers: [AppController],
   providers: [AppService],
