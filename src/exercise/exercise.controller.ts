@@ -1,16 +1,25 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExerciseService } from './exercise.service';
 import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id.pipe';
 import { QueryAllDto } from 'src/common/dto/queryAllDto';
-import { CreateExerciseDto, UpdateExerciseDto } from './dto/exercise.dto';
+import { CreateExerciseDto, GetByDifficultAndTagDto, UpdateExerciseDto } from './dto/exercise.dto';
 
 @ApiBearerAuth()
 @ApiTags('Exercise')
 @Controller('exercise')
 export class ExerciseController {
-    constructor(private readonly exerciseService: ExerciseService) {}
+    constructor(private readonly exerciseService: ExerciseService) { }
 
+    @Get('tag-and-difficult')
+    @ApiQuery({ name: 'tag', type: String })
+    @ApiQuery({ name: 'difficult', type: String })
+    @ApiResponse({ status: 200, description: 'get exercise by tag and difficult' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    getByTagAndDifficult(@Query() getByDifficultAndTagDto: GetByDifficultAndTagDto) {
+        return this.exerciseService.getByTagAndDifficult(getByDifficultAndTagDto);
+    
+    }
     @Get()
     @ApiResponse({ status: 200, description: 'get all exercise document' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -22,6 +31,7 @@ export class ExerciseController {
     @ApiResponse({ status: 200, description: 'get exercise by specific id' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     getExerciseById(@Param('id', ParseObjectIdPipe) id: string) {
+
         return this.exerciseService.findById(id);
     }
 

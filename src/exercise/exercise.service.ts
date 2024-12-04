@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Exercise } from './schemas/exercise.schema';
 import { Model } from 'mongoose';
 import { QueryAllDto } from 'src/common/dto/queryAllDto';
+import { GetByDifficultAndTagDto } from './dto/exercise.dto';
 
 @Injectable()
 export class ExerciseService {
@@ -10,13 +11,20 @@ export class ExerciseService {
         @InjectModel(Exercise.name) private exerciseModel: Model<Exercise>,
     ) { }
 
-    async findAll(exerciseQueryDto:QueryAllDto): Promise<Exercise[]> {
+    async findAll(exerciseQueryDto: QueryAllDto): Promise<Exercise[]> {
         const { page = 1, limit = 10, sortField, sortOrder = 'asc' } = exerciseQueryDto;
         const skip = (page - 1) * limit;
         const sort = sortField ? { [sortField]: sortOrder === 'asc' ? 1 : -1 } as { [key: string]: 1 | -1 } : {};
-        
+
         return this.exerciseModel.find().skip(skip).limit(limit).sort(sort).exec();
 
+    }
+
+    async getByTagAndDifficult(getByDifficultAndTagDto: GetByDifficultAndTagDto): Promise<Exercise[]> {
+        return this.exerciseModel.find({
+            tags: { $in: [getByDifficultAndTagDto.tag] },
+            difficulty: getByDifficultAndTagDto.difficult
+        }).exec();
     }
 
     async findById(id: string): Promise<Exercise> {

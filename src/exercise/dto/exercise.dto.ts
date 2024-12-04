@@ -1,4 +1,4 @@
-import { IsArray, IsMongoId, IsOptional} from "class-validator";
+import { IsArray, IsMongoId, IsOptional, IsString} from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateExerciseDto {
@@ -44,6 +44,16 @@ export class CreateExerciseDto {
     @ApiProperty()
     @IsOptional()
     difficulty: string; 
+}
+
+export class GetByDifficultAndTagDto{
+    @ApiProperty()
+    @IsOptional()
+    tag: string;
+
+    @ApiProperty()
+    @IsOptional()
+    difficult: string;
 }
 
 export class UpdateExerciseDto extends CreateExerciseDto { }
