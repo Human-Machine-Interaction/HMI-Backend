@@ -26,6 +26,9 @@ export class Exercise {
     description: string
 
     @Prop()
+    imageUrl: string
+
+    @Prop()
     videoUrl: string
 
     @Prop({type: [String], default: []})

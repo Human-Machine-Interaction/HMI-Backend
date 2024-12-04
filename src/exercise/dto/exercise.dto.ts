@@ -16,6 +16,10 @@ export class CreateExerciseDto {
 
     @ApiProperty()
     @IsOptional()
+    imageUrl: string;
+
+    @ApiProperty()
+    @IsOptional()
     @IsArray()
     guideSteps: [string];
 
