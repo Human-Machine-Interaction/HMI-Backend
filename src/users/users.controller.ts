@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id.pipe';
 import { UpdateUserDto } from './dto/user.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { QueryAllDto } from 'src/common/dto/queryAllDto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -17,6 +19,15 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)
     async getAllUsers(@Query() userQueryDto: QueryAllDto) {
         return await this.usersService.findAll(userQueryDto);
+    }
+
+
+    @Get('me')
+    @ApiResponse({ status: 200, description: 'get user by specific id' })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    @UseGuards(AuthGuard('jwt'))
+    getMe(@GetUser() user) {
+      return this.usersService.findOne(user.username);
     }
 
     @Get(':id')
